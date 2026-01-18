@@ -1,0 +1,135 @@
+@startuml Activity Diagram - Add Book
+!theme plain
+skinparam activityFontSize 14
+skinparam activityShape roundedBox
+
+title Activity Diagram: Add New Book
+
+start
+
+:User clicks "Add Book" button;
+
+:System opens Book Form Modal;
+
+:User enters book information;
+note right
+  Required fields:
+  - Title
+  - Publisher
+  - Category
+end note
+
+:User selects or creates Author(s);
+
+if (Author exists?) then (yes)
+  :Select existing Author(s);
+else (no)
+  :Enter new Author name;
+  :Add to pending authors list;
+endif
+
+:User selects or creates Publisher;
+
+if (Publisher exists?) then (yes)
+  :Select existing Publisher;
+else (no)
+  :Enter new Publisher name;
+  :Set as pending publisher;
+endif
+
+:User selects or creates Category;
+
+if (Category exists?) then (yes)
+  :Select existing Category;
+else (no)
+  :Enter new Category name and color;
+  :Set as pending category;
+endif
+
+:User selects Series (optional);
+
+if (Add to Series?) then (yes)
+  if (Series exists?) then (yes)
+    :Select existing Series;
+    :Enter series order number;
+  else (no)
+    :Enter Series name;
+    :Set as pending series;
+    :Enter series order number;
+  endif
+else (no)
+endif
+
+:User selects Genres (optional);
+
+:User selects Topics (optional);
+
+:User enters additional details;
+note right
+  Optional fields:
+  - ISBN
+  - Publication Year
+  - Pages
+  - Description
+  - Notes
+  - Reading Status
+  - Rating (0-5)
+end note
+
+:User clicks "Save" button;
+
+:System validates form data;
+
+if (Validation passed?) then (yes)
+  if (Has pending publisher?) then (yes)
+    :System creates Publisher;
+    :Get new publisher ID;
+  endif
+  
+  if (Has pending category?) then (yes)
+    :System creates Category;
+    :Get new category ID;
+  endif
+  
+  if (Has pending authors?) then (yes)
+    :System creates Author(s);
+    :Get new author IDs;
+  endif
+  
+  if (Has pending series?) then (yes)
+    :System creates Series with author(s);
+    :Get new series ID;
+  endif
+  
+  :System generates unique Book ID;
+  
+  :System inserts Book into database;
+  
+  :System creates book_authors relationships;
+  
+  if (Has Genres?) then (yes)
+    :System creates book_genres relationships;
+  endif
+  
+  if (Has Topics?) then (yes)
+    :System creates book_topics relationships;
+  endif
+  
+  :System closes modal;
+  
+  :System refreshes book list;
+  
+  :System shows success notification;
+else (no)
+  :System highlights validation errors;
+  note right
+    Validation checks:
+    - Title required
+    - Publisher required
+    - Category required
+  end note
+endif
+
+stop
+
+@enduml

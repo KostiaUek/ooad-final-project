@@ -1,0 +1,215 @@
+@startuml Class Diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+
+' Entity Classes
+class Book {
+  +id: string
+  +title: string
+  +isbn: string
+  +publicationYear: number
+  +pages: number
+  +description: string
+  +coverImage: string
+  +readingStatus: ReadingStatus
+  +notes: string
+  +rating: number
+  +publisherId: string
+  +seriesId: string
+  +seriesOrder: number
+  +categoryId: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Author {
+  +id: string
+  +name: string
+  +bio: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Publisher {
+  +id: string
+  +name: string
+  +location: string
+  +website: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Series {
+  +id: string
+  +name: string
+  +description: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Genre {
+  +id: string
+  +name: string
+  +description: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Topic {
+  +id: string
+  +name: string
+  +description: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+class Category {
+  +id: string
+  +name: string
+  +description: string
+  +color: string
+  +createdAt: string
+  +updatedAt: string
+}
+
+' Enumerations
+enum ReadingStatus {
+  unread
+  reading
+  completed
+}
+
+' Repository Classes
+class BookRepository {
+  +create(input: BookInput): BookWithRelations
+  +update(id: string, input: BookInput, options?): BookWithRelations
+  +delete(id: string, options?): void
+  +findById(id: string): Book
+  +findByIdWithRelations(id: string): BookWithRelations
+  +findAll(): BookWithRelations[]
+  +search(params: BookSearchParams): PaginatedResponse
+  +updateReadingProgress(update: ReadingProgressUpdate): Book
+  +checkDeleteImpact(id: string): BookDeleteImpact
+  +checkUpdateImpact(id: string, input: BookInput): BookUpdateImpact
+}
+
+class AuthorRepository {
+  +create(input: AuthorInput): Author
+  +update(id: string, input: AuthorInput): Author
+  +delete(id: string): void
+  +findById(id: string): Author
+  +findByIdWithStats(id: string): AuthorWithStats
+  +findAll(): AuthorWithStats[]
+}
+
+class PublisherRepository {
+  +create(input: PublisherInput): Publisher
+  +update(id: string, input: PublisherInput): Publisher
+  +delete(id: string): void
+  +findById(id: string): Publisher
+  +findByIdWithStats(id: string): PublisherWithStats
+  +findAll(): PublisherWithStats[]
+}
+
+class SeriesRepository {
+  +create(input: SeriesInput): Series
+  +update(id: string, input: SeriesInput): Series
+  +delete(id: string): void
+  +findById(id: string): Series
+  +findByIdWithAuthors(id: string): SeriesWithAuthors
+  +findAll(): SeriesWithAuthors[]
+}
+
+class GenreRepository {
+  +create(input: GenreInput): Genre
+  +update(id: string, input: GenreInput): Genre
+  +delete(id: string): void
+  +findById(id: string): Genre
+  +findByIdWithStats(id: string): GenreWithStats
+  +findAll(): GenreWithStats[]
+}
+
+class TopicRepository {
+  +create(input: TopicInput): Topic
+  +update(id: string, input: TopicInput): Topic
+  +delete(id: string): void
+  +findById(id: string): Topic
+  +findByIdWithStats(id: string): TopicWithStats
+  +findAll(): TopicWithStats[]
+}
+
+class CategoryRepository {
+  +create(input: CategoryInput): Category
+  +update(id: string, input: CategoryInput): Category
+  +delete(id: string): void
+  +findById(id: string): Category
+  +findByIdWithStats(id: string): CategoryWithStats
+  +findAll(): CategoryWithStats[]
+}
+
+' Service Classes
+class LibraryService {
+  +getStats(): LibraryStats
+  -getRecommendedBooks(): BookWithRelations[]
+}
+
+class DomainService {
+  +integrityCheck(): IntegrityCheckResult
+  +cleanupOrphans(): CleanupResult
+  +checkAuthorDeleteImpact(id: string): AuthorDeleteImpact
+  +checkBookDeletionImpact(id: string): BookDeleteImpact
+}
+
+class ImportExportService {
+  +exportToJson(filePath: string): void
+  +exportToCsv(filePath: string): void
+  +importFromJson(filePath: string): ImportResult
+  -escapeCsvField(field: string): string
+}
+
+' IPC Handler
+class IPCHandlers {
+  +registerIpcHandlers(): void
+}
+
+' Relationships - Entity Relationships based on DB schema
+Book "1" --> "1" Publisher : belongsTo (NOT NULL)
+Book "0..*" --> "0..1" Series : belongsTo (nullable)
+Book "1" --> "1" Category : belongsTo (NOT NULL)
+Book "*" --> "*" Author : hasMany (via book_authors)
+Book "*" --> "*" Genre : hasMany (via book_genres)
+Book "*" --> "*" Topic : hasMany (via book_topics)
+Series "*" --> "1..*" Author : hasMany (via series_authors)
+
+' Service dependencies
+LibraryService --> BookRepository : uses
+
+DomainService ..> BookRepository : inspects
+DomainService ..> AuthorRepository : inspects
+DomainService ..> PublisherRepository : inspects
+DomainService ..> SeriesRepository : inspects
+
+ImportExportService --> BookRepository
+ImportExportService --> AuthorRepository
+ImportExportService --> PublisherRepository
+ImportExportService --> SeriesRepository
+ImportExportService --> GenreRepository
+ImportExportService --> TopicRepository
+ImportExportService --> CategoryRepository
+
+' IPC handlers use all services and repositories
+IPCHandlers --> LibraryService
+IPCHandlers --> DomainService
+IPCHandlers --> ImportExportService
+IPCHandlers --> BookRepository
+IPCHandlers --> AuthorRepository
+IPCHandlers --> PublisherRepository
+IPCHandlers --> SeriesRepository
+IPCHandlers --> GenreRepository
+IPCHandlers --> TopicRepository
+IPCHandlers --> CategoryRepository
+
+Book --> ReadingStatus
+
+@enduml

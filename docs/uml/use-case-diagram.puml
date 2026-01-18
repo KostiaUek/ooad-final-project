@@ -1,0 +1,129 @@
+@startuml Use Case Diagram
+!theme plain
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+actor "User" as user
+
+rectangle "Home Library Management System" {
+  ' Book Management
+  package "Book Management" {
+    usecase "Add Book" as UC1
+    usecase "Edit Book" as UC2
+    usecase "Delete Book" as UC3
+    usecase "View Book Details" as UC4
+    usecase "Search Books" as UC5
+    usecase "Filter Books" as UC6
+    usecase "Update Reading Progress" as UC7
+  }
+
+  ' Author Management
+  package "Author Management" {
+    usecase "Add Author" as UC8
+    usecase "Edit Author" as UC9
+    usecase "Delete Author" as UC10
+  }
+  note right of UC8
+    Authors can be created
+    inline via Book Form or
+    from Authors page
+  end note
+
+  ' Publisher Management
+  package "Publisher Management" {
+    usecase "Add Publisher" as UC12
+    usecase "Edit Publisher" as UC13
+    usecase "Delete Publisher" as UC14
+  }
+  note right of UC12
+    Publishers can be created
+    inline via Book Form or
+    from Publishers page
+  end note
+
+  ' Series Management
+  package "Series Management" {
+    usecase "Add Series" as UC15
+    usecase "Edit Series" as UC16
+    usecase "Delete Series" as UC17
+  }
+  note right of UC15
+    Series are created via
+    the Book Form when
+    adding/editing books
+  end note
+
+  ' Genre/Topic/Category Management
+  package "Classification Management" {
+    usecase "Manage Genres" as UC19
+    usecase "Manage Topics" as UC20
+    usecase "Manage Categories" as UC21
+  }
+  note right of UC19
+    Add/Edit/Delete for
+    Genres, Topics, and
+    Categories
+  end note
+
+  ' Dashboard & Statistics
+  package "Dashboard & Analytics" {
+    usecase "View Dashboard" as UC22
+  }
+  note right of UC22
+    Dashboard shows library stats,
+    reading progress breakdown,
+    top genres/authors,
+    recent and recommended books
+  end note
+
+  ' Data Integrity
+  package "Data Integrity" {
+    usecase "Run Integrity Check" as UC24
+    usecase "Cleanup Orphans" as UC25
+  }
+
+  ' Import/Export
+  package "Data Management" {
+    usecase "Export to JSON" as UC26
+    usecase "Export to CSV" as UC27
+    usecase "Import from JSON" as UC28
+  }
+}
+
+' User connections
+user --> UC1
+user --> UC2
+user --> UC3
+user --> UC4
+user --> UC5
+user --> UC6
+user --> UC7
+user --> UC8
+user --> UC9
+user --> UC10
+user --> UC12
+user --> UC13
+user --> UC14
+user --> UC15
+user --> UC16
+user --> UC17
+user --> UC19
+user --> UC20
+user --> UC21
+user --> UC22
+user --> UC24
+user --> UC25
+user --> UC26
+user --> UC27
+user --> UC28
+
+' Include/Extend relationships
+UC1 ..> UC8 : <<include>>
+UC1 ..> UC12 : <<include>>
+UC1 ..> UC15 : <<include>>
+UC5 <.. UC6 : <<extend>>
+UC3 ..> UC25 : <<extend>>
+UC2 ..> UC25 : <<extend>>
+
+@enduml

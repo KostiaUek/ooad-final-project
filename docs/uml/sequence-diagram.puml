@@ -1,0 +1,116 @@
+@startuml Sequence Diagram - Search Books
+!theme plain
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true
+
+title Sequence Diagram: Search Books with Filters
+
+actor User
+participant "BooksPage\n(React)" as UI
+participant "Electron\nPreload API" as Preload
+participant "IPC Main\nHandlers" as IPC
+participant "BookRepository" as BookRepo
+database "SQLite\nDatabase" as DB
+
+== User Initiates Search ==
+
+User -> UI: Enter search query\n& select filters
+activate UI
+
+UI -> UI: Update local state\n(searchQuery, filters)
+
+UI -> Preload: electronAPI.searchBooks(params)
+activate Preload
+
+note right of UI
+  BookSearchParams:
+  - query: string
+  - readingStatus: ReadingStatusType
+  - genreId: string
+  - authorId: string
+  - publisherId: string
+  - seriesId: string
+  - categoryId: string
+  - topicId: string
+  - yearFrom/yearTo: number
+  - sortBy, sortOrder
+  - limit, offset
+end note
+
+Preload -> IPC: ipcRenderer.invoke(\n'book:search', params)
+activate IPC
+
+== Validation & Processing ==
+
+IPC -> IPC: BookSearchParamsSchema\n.parse(params)
+
+IPC -> BookRepo: search(validatedParams)
+activate BookRepo
+
+== Database Query ==
+
+BookRepo -> DB: SELECT with dynamic\nWHERE clauses
+activate DB
+
+note right of BookRepo
+  Query includes:
+  - FTS5 full-text search on books_fts
+  - JOINs: book_authors, book_genres
+  - Filters: status, genre, author, etc.
+  - ORDER BY & LIMIT/OFFSET
+end note
+
+DB --> BookRepo: Return matching book rows
+deactivate DB
+
+BookRepo -> BookRepo: Map results to\nBookWithRelations
+
+loop For each book in results
+  BookRepo -> DB: SELECT authors\nFROM book_authors
+  activate DB
+  DB --> BookRepo: Return authors
+  deactivate DB
+  
+  BookRepo -> DB: SELECT genres\nFROM book_genres
+  activate DB
+  DB --> BookRepo: Return genres
+  deactivate DB
+  
+  BookRepo -> DB: SELECT topics\nFROM book_topics
+  activate DB
+  DB --> BookRepo: Return topics
+  deactivate DB
+  
+  BookRepo -> DB: SELECT publisher, series, category
+  activate DB
+  DB --> BookRepo: Return related entities
+  deactivate DB
+end
+
+BookRepo -> BookRepo: Build PaginatedResponse<\nBookWithRelations>
+
+BookRepo --> IPC: Return { items, total,\npage, pageSize, totalPages }
+deactivate BookRepo
+
+== Response Flow ==
+
+IPC --> Preload: Return PaginatedResponse
+deactivate IPC
+
+Preload --> UI: Return search results
+deactivate Preload
+
+UI -> UI: setBooks(result.items)
+
+UI -> User: Render filtered\nbook list
+deactivate UI
+
+== Alternative: No Results ==
+
+note over UI, DB
+  If no books match the search criteria,
+  UI displays EmptyState component
+  with message "No books found"
+end note
+
+@enduml
