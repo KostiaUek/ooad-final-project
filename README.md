@@ -24,7 +24,7 @@ A desktop application for managing personal book collections, built with Electro
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/ooad-final-project.git
+git clone https://github.com/KostiaUek/ooad-final-project.git
 cd ooad-final-project
 
 # Install dependencies
