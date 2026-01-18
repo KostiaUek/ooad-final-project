@@ -76,50 +76,17 @@ note right
   - Rating (0-5)
 end note
 
+
+' =========================
+' Save + validation loop (arrow comes from "User fixes errors")
+' =========================
 :User clicks "Save" button;
 
+label SAVE_VALIDATION
 :System validates form data;
 
 if (Validation passed?) then (yes)
-  if (Has pending publisher?) then (yes)
-    :System creates Publisher;
-    :Get new publisher ID;
-  endif
-  
-  if (Has pending category?) then (yes)
-    :System creates Category;
-    :Get new category ID;
-  endif
-  
-  if (Has pending authors?) then (yes)
-    :System creates Author(s);
-    :Get new author IDs;
-  endif
-  
-  if (Has pending series?) then (yes)
-    :System creates Series with author(s);
-    :Get new series ID;
-  endif
-  
-  :System generates unique Book ID;
-  
-  :System inserts Book into database;
-  
-  :System creates book_authors relationships;
-  
-  if (Has Genres?) then (yes)
-    :System creates book_genres relationships;
-  endif
-  
-  if (Has Topics?) then (yes)
-    :System creates book_topics relationships;
-  endif
-  
-  :System closes modal;
-  
-  :System refreshes book list;
-  
-  :System shows success notification;
+  ' continue to success flow
 else (no)
   :System highlights validation errors;
   note right
@@ -128,7 +95,58 @@ else (no)
     - Publisher required
     - Category required
   end note
+
+  :User fixes errors;
+
+  ' User attempts saving again
+  :User clicks "Save" button;
+
+  goto SAVE_VALIDATION
 endif
+
+
+' =========================
+' Success flow
+' =========================
+if (Has pending publisher?) then (yes)
+  :System creates Publisher;
+  :Get new publisher ID;
+endif
+
+if (Has pending category?) then (yes)
+  :System creates Category;
+  :Get new category ID;
+endif
+
+if (Has pending authors?) then (yes)
+  :System creates Author(s);
+  :Get new author IDs;
+endif
+
+if (Has pending series?) then (yes)
+  :System creates Series with author(s);
+  :Get new series ID;
+endif
+
+:System generates unique Book ID;
+
+:System inserts Book into database;
+
+:System creates book_authors relationships;
+
+if (Has Genres?) then (yes)
+  :System creates book_genres relationships;
+endif
+
+if (Has Topics?) then (yes)
+  :System creates book_topics relationships;
+endif
+
+:System closes modal;
+
+:System refreshes book list;
+
+:System shows success notification;
 
 stop
 

@@ -24,11 +24,6 @@ rectangle "Home Library Management System" {
     usecase "Edit Author" as UC9
     usecase "Delete Author" as UC10
   }
-  note right of UC8
-    Authors can be created
-    inline via Book Form or
-    from Authors page
-  end note
 
   ' Publisher Management
   package "Publisher Management" {
@@ -36,11 +31,6 @@ rectangle "Home Library Management System" {
     usecase "Edit Publisher" as UC13
     usecase "Delete Publisher" as UC14
   }
-  note right of UC12
-    Publishers can be created
-    inline via Book Form or
-    from Publishers page
-  end note
 
   ' Series Management
   package "Series Management" {
@@ -48,11 +38,6 @@ rectangle "Home Library Management System" {
     usecase "Edit Series" as UC16
     usecase "Delete Series" as UC17
   }
-  note right of UC15
-    Series are created via
-    the Book Form when
-    adding/editing books
-  end note
 
   ' Genre/Topic/Category Management
   package "Classification Management" {

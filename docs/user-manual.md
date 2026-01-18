@@ -28,15 +28,46 @@ Welcome to the Home Library Management System! This application helps you organi
 ### Windows Installation
 
 #### Option 1: Installer (Recommended)
-1. Download `Home Library Manager Setup.exe`
-2. Double-click the installer
-3. Follow the installation wizard
-4. Launch from Start Menu or Desktop shortcut
+1. Navigate to the `release/` folder
+2. Double-click `Home Library Manager Setup 1.0.0.exe`
+3. Follow the installation wizard:
+   - Choose installation directory (or use default)
+   - Select whether to create Desktop/Start Menu shortcuts
+4. Click "Install" and wait for completion
+5. Launch from Start Menu or Desktop shortcut
 
 #### Option 2: Portable Version
-1. Download `Home Library Manager.exe` (portable)
-2. Place it in any folder
+1. Navigate to the `release/` folder
+2. Copy `Home Library Manager 1.0.0.exe` to any folder
 3. Double-click to run (no installation required)
+4. Your data will be stored in `%APPDATA%\home-library-manager\`
+
+### Running from Source (Development)
+
+If you want to run the application from source code:
+
+1. **Prerequisites**:
+   - Node.js 18+ ([nodejs.org](https://nodejs.org/))
+   - Git ([git-scm.com](https://git-scm.com/))
+   - Visual Studio Build Tools with C++ workload
+
+2. **Clone and install**:
+   ```bash
+   git clone https://github.com/your-username/ooad-final-project.git
+   cd ooad-final-project
+   npm install
+   ```
+
+3. **Run in development mode**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Build your own installer** (optional):
+   ```bash
+   npm run build
+   ```
+   Installers will be created in the `release/` folder.
 
 ### First Launch
 
@@ -96,7 +127,12 @@ See which genres are most represented in your library.
 See which authors you have the most books from.
 
 ### Recommended Books
-Get personalized suggestions based on your reading history.
+Get personalized book suggestions based on your reading history:
+
+- **If you have completed books**: The system recommends unread books from your top 3 most-read genres (based on completed books)
+- **If you haven't completed any books yet**: The system shows your 5 most recently added unread books
+
+**Tip**: Complete and rate your books to get better personalized recommendations!
 
 ---
 
@@ -115,15 +151,21 @@ The Books page shows your collection in a grid layout. Each book card displays:
 
 Use the search bar to find books by:
 - Title
+- Author name
+- Genre name
+- Publication year
 - ISBN
-- Notes content
+- Description
 
 ### Filtering Books
 
-Use the dropdown filters to narrow results:
-- **Status**: Filter by reading status
-- **Genre**: Filter by genre
-- **Author**: Filter by author
+Use the dropdown filters and input fields to narrow results:
+- **Status**: Filter by reading status (Unread, Reading, Completed)
+- **Genre**: Filter by a specific genre
+- **Author**: Filter by a specific author
+- **Year**: Filter by publication year
+
+You can combine multiple filters together, and use the "Clear all" button to reset all filters at once.
 
 ### Adding a Book
 
@@ -376,7 +418,7 @@ The entity has books associated with it. Remove it from all books first.
 Only non-default categories with no books can be deleted.
 
 #### Books not appearing in search
-Make sure you're searching in the correct field (title, ISBN, or notes).
+The search box searches across title, author name, genre name, publication year, ISBN, and description. Make sure you're using relevant keywords. You can also use the dropdown filters for precise filtering by status, genre, author, or year.
 
 ### Getting Help
 
